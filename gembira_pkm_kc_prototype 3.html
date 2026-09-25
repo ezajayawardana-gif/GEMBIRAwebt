@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GEMBIRA - Petualangan Belajar Interaktif Anak Usia Dini & SD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        gempink: '#FF6B8B',
+                        gemyellow: '#FFD166',
+                        gemblue: '#118AB2',
+                        gemgreen: '#06D6A0',
+                        gempurple: '#8338EC',
+                        gemdark: '#2B2D42',
+                        gemorange: '#FB8500'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 107, 139, 0.6); }
+            50% { box-shadow: 0 0 30px rgba(6, 214, 160, 0.8); }
+        }
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+        .game-card-hover:hover {
+            transform: translateY(-6px) scale(1.02);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .fun-pattern {
+            background-color: #f8f9fa;
+            background-image: radial-gradient(#FFD166 1.5px, transparent 1.5px), radial-gradient(#FF6B8B 1.5px, #f8f9fa 1.5px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="fun-pattern text-gemdark font-sans antialiased selection:bg-gemyellow selection:text-gemdark pb-24 md:pb-10 overflow-x-hidden">
+
+    <!-- LOGIN MODAL -->
+    <div id="login-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border-4 border-gempurple text-center space-y-5">
+            <div class="w-16 h-16 bg-purple-100 text-gempurple rounded-full mx-auto flex items-center justify-center text-3xl floating">
+                🚀
+            </div>
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-black text-gemdark">Masuk Akun GEMBIRA</h2>
+                <p class="text-xs text-gray-500 font-medium mt-1">Masukkan email orang tua / wali untuk melacak progres riil anak secara sinkron antar perangkat.</p>
+            </div>
+            
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-black uppercase text-gray-600 mb-1">Email Orang Tua / Wali</label>
+                    <input type="email" id="input-parent-email" placeholder="contoh: orangtua@gmail.com" class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-gempurple focus:outline-none font-bold text-gemdark text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase text-gray-600 mb-1">Nama Siswa / Anak</label>
+                    <input type="text" id="input-username" placeholder="Contoh: Budi Pratama" class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-gempurple focus:outline-none font-bold text-gemdark text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase text-gray-600 mb-1">Pilih Avatar Petualang</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button type="button" onclick="selectAvatar('🦊')" class="avatar-option p-3 rounded-2xl border-2 border-gempurple bg-purple-50 text-2xl">🦊</button>
+                        <button type="button" onclick="selectAvatar('🐱')" class="avatar-option p-3 rounded-2xl border-2 border-gray-200 text-2xl">🐱</button>
+                        <button type="button" onclick="selectAvatar('🐼')" class="avatar-option p-3 rounded-2xl border-2 border-gray-200 text-2xl">🐼</button>
+                        <button type="button" onclick="selectAvatar('🦁')" class="avatar-option p-3 rounded-2xl border-2 border-gray-200 text-2xl">🦁</button>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="handleLogin()" class="w-full bg-gempurple hover:bg-purple-700 text-white font-black py-3.5 rounded-2xl shadow-xl text-base game-card-hover">
+                ✨ Mulai / Masuk Petualangan!
+            </button>
+        </div>
+    </div>
+
+    <!-- HEADER / DESKTOP NAVBAR -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-md border-b-4 border-gemyellow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchSection('adventure')">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-tr from-gempink to-gemyellow rounded-2xl flex items-center justify-center text-white text-xl sm:text-2xl shadow-lg rotate-[-6deg] floating">
+                    <i class="fa-solid fa-rocket"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black tracking-wide text-gempurple">GEMBIRA</h1>
+                    <p class="text-[10px] font-bold text-gray-500">Tanpa Buku, Asyik Bermain!</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2 bg-amber-50 border-2 border-amber-200 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-inner">
+                    <span class="text-xl sm:text-2xl">🪙</span>
+                    <div>
+                        <p class="text-[9px] uppercase font-bold text-amber-700">Koin</p>
+                        <span id="global-coins" class="text-base sm:text-lg font-black text-amber-800">0</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-2 bg-purple-50 border-2 border-purple-200 px-3 py-1.5 rounded-2xl cursor-pointer" onclick="openLoginModal()">
+                    <span id="nav-user-avatar" class="text-xl sm:text-2xl">🦊</span>
+                    <div class="text-left hidden sm:block">
+                        <p id="nav-username" class="text-xs font-black text-gempurple truncate max-w-[100px]">Petualang</p>
+                        <span class="text-[9px] text-gray-500 font-bold underline">Ganti Akun</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden lg:flex items-center space-x-1 font-bold text-sm">
+                <button onclick="switchSection('adventure')" class="nav-btn px-3 py-2 rounded-xl hover:bg-purple-100 text-gempurple transition">🗺️ Peta</button>
+                <button onclick="switchSection('games')" class="nav-btn px-3 py-2 rounded-xl hover:bg-pink-100 hover:text-gempink transition">🎮 Game</button>
+                <button onclick="switchSection('modules')" class="nav-btn px-3 py-2 rounded-xl hover:bg-blue-100 hover:text-gemblue transition">📚 Materi</button>
+                <button onclick="switchSection('leaderboard')" class="nav-btn px-3 py-2 rounded-xl hover:bg-yellow-100 hover:text-amber-700 transition">🏆 Leaderboard</button>
+                <button onclick="switchSection('dashboard')" class="nav-btn px-3 py-2 rounded-xl hover:bg-green-100 hover:text-gemgreen transition">📊 Laporan Ortu</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MOBILE BOTTOM NAVIGATION BAR -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t-2 border-gray-200 px-3 py-2 flex justify-around items-center shadow-2xl">
+        <button onclick="switchSection('adventure')" class="flex flex-col items-center text-gempurple text-xs font-black p-1">
+            <i class="fa-solid fa-map text-lg mb-0.5"></i>
+            <span>Peta</span>
+        </button>
+        <button onclick="switchSection('games')" class="flex flex-col items-center text-gray-500 hover:text-gempink text-xs font-bold p-1">
+            <i class="fa-solid fa-gamepad text-lg mb-0.5"></i>
+            <span>Game</span>
+        </button>
+        <button onclick="switchSection('modules')" class="flex flex-col items-center text-gray-500 hover:text-gemblue text-xs font-bold p-1">
+            <i class="fa-solid fa-book-open text-lg mb-0.5"></i>
+            <span>Materi</span>
+        </button>
+        <button onclick="switchSection('leaderboard')" class="flex flex-col items-center text-gray-500 hover:text-amber-600 text-xs font-bold p-1">
+            <i class="fa-solid fa-trophy text-lg mb-0.5"></i>
+            <span>Rank</span>
+        </button>
+        <button onclick="switchSection('dashboard')" class="flex flex-col items-center text-gray-500 hover:text-gemgreen text-xs font-bold p-1">
+            <i class="fa-solid fa-chart-pie text-lg mb-0.5"></i>
+            <span>Ortu</span>
+        </button>
+    </div>
+
+    <!-- SECTION 1: ADVENTURE MAP -->
+    <section id="adventure-section" class="main-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div class="text-center space-y-3 mb-8">
+            <span class="bg-gempurple/20 text-gempurple text-xs font-extrabold px-4 py-2 rounded-full uppercase tracking-wider border border-gempurple/30 inline-block">
+                🌐 Sinkronisasi Cloud Antar Perangkat & Tab Aktif
+            </span>
+            <h2 id="welcome-greeting" class="text-3xl sm:text-5xl font-black text-gemdark">Pilih Pulau Petualangan!</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto font-medium text-sm sm:text-base">Belajar interaktif penuh warna tanpa buku, dirancang agar anak tidak bosan.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+            <div onclick="switchSection('games')" class="bg-gradient-to-br from-purple-500 to-gempurple rounded-3xl p-6 sm:p-8 text-white shadow-xl game-card-hover cursor-pointer relative overflow-hidden border-4 border-white">
+                <div class="absolute -right-6 -bottom-6 text-7xl opacity-20">🧮</div>
+                <span class="bg-white/20 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Pulau Angka</span>
+                <h3 class="text-2xl sm:text-3xl font-black mt-3 mb-2">Kerajaan Balon Matematika</h3>
+                <p class="text-purple-100 text-xs sm:text-sm mb-6">Pecahkan balon angka dan taklukkan teka-teki berhitung seru.</p>
+                <div class="flex items-center justify-between">
+                    <span class="bg-gemyellow text-gemdark font-black px-3 py-1.5 rounded-xl text-xs">⭐ +50 Koin</span>
+                    <span class="bg-white text-gempurple font-extrabold px-3 py-1.5 rounded-xl text-xs shadow">Mainkan &rarr;</span>
+                </div>
+            </div>
+
+            <div onclick="switchSection('games')" class="bg-gradient-to-br from-pink-500 to-gempink rounded-3xl p-6 sm:p-8 text-white shadow-xl game-card-hover cursor-pointer relative overflow-hidden border-4 border-white">
+                <div class="absolute -right-6 -bottom-6 text-7xl opacity-20">📖</div>
+                <span class="bg-white/20 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Pulau Huruf</span>
+                <h3 class="text-2xl sm:text-3xl font-black mt-3 mb-2">Hutan Ejaan & Kata</h3>
+                <p class="text-pink-100 text-xs sm:text-sm mb-6">Cocokkan gambar hewan dan benda lucu dengan huruf ajaib.</p>
+                <div class="flex items-center justify-between">
+                    <span class="bg-gemyellow text-gemdark font-black px-3 py-1.5 rounded-xl text-xs">⭐ +50 Koin</span>
+                    <span class="bg-white text-gempink font-extrabold px-3 py-1.5 rounded-xl text-xs shadow">Mainkan &rarr;</span>
+                </div>
+            </div>
+
+            <div onclick="switchSection('modules')" class="bg-gradient-to-br from-emerald-400 to-gemgreen rounded-3xl p-6 sm:p-8 text-white shadow-xl game-card-hover cursor-pointer relative overflow-hidden border-4 border-white">
+                <div class="absolute -right-6 -bottom-6 text-7xl opacity-20">🎨</div>
+                <span class="bg-white/20 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Pulau Usia Dini</span>
+                <h3 class="text-2xl sm:text-3xl font-black mt-3 mb-2">8 Modul Edukasi Lengkap</h3>
+                <p class="text-emerald-100 text-xs sm:text-sm mb-6">Warna, geometri, hitung hewan, suara satwa, dan memori kartu.</p>
+                <div class="flex items-center justify-between">
+                    <span class="bg-gemyellow text-gemdark font-black px-3 py-1.5 rounded-xl text-xs">⭐ 8 Pilihan Game</span>
+                    <span class="bg-white text-emerald-700 font-extrabold px-3 py-1.5 rounded-xl text-xs shadow">Jelajahi &rarr;</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: GAMES -->
+    <section id="games-section" class="main-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div class="text-center space-y-3 mb-8">
+            <span class="bg-gemgreen/20 text-emerald-800 text-xs font-extrabold px-4 py-2 rounded-full uppercase tracking-wider">
+                🕹️ Arcade Belajar Anti Bosan
+            </span>
+            <h2 class="text-3xl sm:text-5xl font-black text-gemdark">Pilih Tantangan Game</h2>
+            <p class="text-gray-600 max-w-xl mx-auto font-medium text-sm">Mainkan untuk menaikkan skor dan poin di Leaderboard!</p>
+            
+            <div class="flex justify-center space-x-2 pt-2 overflow-x-auto pb-2">
+                <button onclick="switchGameTab('balloon')" id="btn-balloon" class="px-4 py-2.5 rounded-2xl font-black shadow transition bg-gempurple text-white text-xs sm:text-sm shrink-0">
+                    🎈 Letus Balon
+                </button>
+                <button onclick="switchGameTab('word')" id="btn-word" class="px-4 py-2.5 rounded-2xl font-black shadow transition bg-white text-gray-600 border-2 border-gray-200 text-xs sm:text-sm shrink-0">
+                    🧩 Tebak Kata
+                </button>
+            </div>
+        </div>
+
+        <!-- Balloon Game -->
+        <div id="game-balloon" class="game-container max-w-3xl mx-auto bg-white rounded-3xl p-5 sm:p-10 shadow-xl border-4 border-gempurple/40">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <div class="flex items-center space-x-2">
+                    <span class="bg-gempurple text-white px-3 py-1 rounded-xl font-black text-xs">Balon Matematika</span>
+                    <span id="balloon-score" class="font-black text-sm sm:text-lg text-amber-500">⭐ Skor: 0</span>
+                </div>
+                <div id="balloon-timer" class="text-xs sm:text-sm font-black bg-purple-100 text-gempurple px-3 py-1 rounded-xl">
+                    ⏱️ 45s
+                </div>
+            </div>
+
+            <div id="balloon-play-area" class="text-center space-y-6 py-4 hidden">
+                <div class="bg-gradient-to-r from-purple-500 to-gempurple text-white p-6 rounded-3xl shadow-lg">
+                    <p class="text-xs font-bold uppercase tracking-widest text-purple-200">Hasil dari:</p>
+                    <div id="balloon-question" class="text-4xl sm:text-6xl font-black tracking-wider mt-2">
+                        6 + 4 = ?
+                    </div>
+                </div>
+                <p class="text-xs sm:text-sm font-bold text-gray-500">Pilih jawaban balon di bawah ini!</p>
+                <div id="balloon-options" class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2"></div>
+                <div id="balloon-feedback" class="text-lg font-black h-8 flex items-center justify-center"></div>
+            </div>
+
+            <div id="balloon-start-screen" class="text-center py-8 space-y-5">
+                <div class="text-6xl">🎈</div>
+                <h3 class="text-2xl sm:text-3xl font-black text-gemdark">Tantangan Balon Angka</h3>
+                <p class="text-gray-600 text-xs sm:text-sm max-w-md mx-auto font-medium">Asah kecepatan berhitung tanpa rumus kaku.</p>
+                <button onclick="startBalloonGame()" class="bg-gempurple hover:bg-purple-700 text-white font-black px-8 py-3.5 rounded-2xl shadow-xl text-base game-card-hover">
+                    🚀 Mulai Pecahkan Balon!
+                </button>
+            </div>
+        </div>
+
+        <!-- Word Game -->
+        <div id="game-word" class="game-container hidden max-w-3xl mx-auto bg-white rounded-3xl p-5 sm:p-10 shadow-xl border-4 border-gempink/40">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <div class="flex items-center space-x-2">
+                    <span class="bg-gempink text-white px-3 py-1 rounded-xl font-black text-xs">Tebak Kata</span>
+                    <span id="word-score" class="font-black text-sm sm:text-lg text-amber-500">⭐ Skor: 0</span>
+                </div>
+                <div id="word-level-indicator" class="text-xs sm:text-sm font-black bg-pink-100 text-gempink px-3 py-1 rounded-xl">
+                    Soal 1 / 4
+                </div>
+            </div>
+
+            <div id="word-play-area" class="text-center space-y-5 py-2 hidden">
+                <div class="w-24 h-24 mx-auto bg-pink-50 rounded-full flex items-center justify-center text-6xl shadow-inner border-4 border-gempink/30 floating" id="word-emoji">
+                    🍎
+                </div>
+                <div id="word-display" class="text-2xl sm:text-4xl font-black text-gemdark tracking-widest bg-gray-50 py-3 rounded-2xl border-2 border-dashed border-gray-300">
+                    _ P P L E
+                </div>
+                <p class="text-xs sm:text-sm text-gray-500 font-bold">Pilih huruf yang hilang!</p>
+                <div id="word-options" class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2"></div>
+                <div id="word-feedback" class="text-lg font-black h-8 flex items-center justify-center"></div>
+            </div>
+
+            <div id="word-start-screen" class="text-center py-8 space-y-5">
+                <div class="text-6xl">🧩</div>
+                <h3 class="text-2xl sm:text-3xl font-black text-gemdark">Teka-Teki Huruf & Gambar</h3>
+                <p class="text-gray-600 text-xs sm:text-sm max-w-md mx-auto font-medium">Bantu anak mengenal kosakata benda sehari-hari.</p>
+                <button onclick="startWordGame()" class="bg-gempink hover:bg-pink-500 text-white font-black px-8 py-3.5 rounded-2xl shadow-xl text-base game-card-hover">
+                    🚀 Mulai Tebak Kata!
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: MODULES (8 PLAYABLE MODULES) -->
+    <section id="modules-section" class="main-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div class="text-center space-y-3 mb-10">
+            <span class="bg-gemblue/20 text-gemblue text-xs font-extrabold px-4 py-2 rounded-full uppercase tracking-wider">
+                🎨 8 Materi & Game Usia Dini Interaktif
+            </span>
+            <h2 class="text-3xl sm:text-5xl font-black text-gemdark">Dunia Materi Permainan Anak</h2>
+            <p class="text-gray-600 max-w-xl mx-auto font-medium text-sm">Semua modul dimainkan langsung dan langsung merekam progres riil anak.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Modul 1 -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-gemblue/20 hover:border-gemblue transition game-card-hover flex flex-col justify-between">
+                <div>
+                    <div class="w-14 h-14 bg-gemblue/20 rounded-2xl flex items-center justify-center text-3xl mb-3">🔴</div>
+                    <h3 class="text-lg font-black text-gemdark mb-1">Mengenal Warna Ceria</h3>
+                    <p class="text-xs text-gray-600 font-medium">Game mencocokkan warna primer & sekunder.</p>
+                </div>
+                <button onclick="launchInteractiveModule(1)" class="mt-5 w-full bg-gemblue/10 hover:bg-gemblue hover:text-white text-gemblue font-extrabold py-2.5 rounded-2xl transition text-xs">
+                    Mainkan &rarr;
+                </button>
+            </div>
+
+            <!-- Modul 2 -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-gempink/20 hover:border-gempink transition game-card-hover flex flex-col justify-between">
+                <div>
+                    <div class="w-14 h-14 bg-gempink/20 rounded-2xl flex items-center justify-center text-3xl mb-3">⭐</div>
+                    <h3 class="text-lg font-black text-gemdark mb-1">Bentuk Geometri Ajaib</h3>
+                    <p class="text-xs text-gray-600 font-medium">Mengenal lingkaran, segitiga, kotak & bintang.</p>
+                </div>
+                <button onclick="launchInteractiveModule(2)" class="mt-5 w-full bg-gempink/10 hover:bg-gempink hover:text-white text-gempink font-extrabold py-2.5 rounded-2xl transition text-xs">
+                    Mainkan &rarr;
+                </button>
+            </div>
+
+            <!-- Modul 3 -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-gemgreen/20 hover:border-gemgreen transition game-card-hover flex flex-col justify-between">
+                <div>
+                    <div class="w-14 h-14 bg-gemgreen/20 rounded-2xl flex items-center justify-center text-3xl mb-3">🎵</div>
+                    <h3 class="text-lg font-black text-gemdark mb-1">Hitung Hewan Melompat</h3>
+                    <p class="text-xs text-gray-600 font-medium">Menghitung jumlah hewan lucu berirama.</p>
+                </div>
+                <button onclick="launchInteractiveModule(3)" class="mt-5 w-full bg-gemgreen/10 hover:bg-gemgreen hover:text-white text-gemgreen font-extrabold py-2.5 rounded-2xl transition text-xs">
+                    Mainkan &rarr;
+                </button>
+            </div>
+
+            <!-- Modul 4 -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-gemyellow/20 hover:border-gemyellow transition game-card-hover flex flex-col justify-between">
+                <div>
+                    <div class="w-14 h-14 bg-gemyellow/20 rounded-2xl flex items-center justify-center text-3xl mb-3">📖</div>
+                    <h3 class="text-lg font-black text-gemdark mb-1">Dongeng Nilai Moral</h3>
+                    <p class="text-xs text-gray-600 font-medium">Cerita interaktif kejujuran & tolong menolong.</p>
+                </div>
+                <button onclick="launchInteractiveModule(4)" class="mt-5 w-full bg-gemyellow/20 hover:bg-gemyellow hover:text-gemdark text-amber-800 font-extrabold py-2.5 rounded-2xl transition text-xs">
+                    Mainkan &rarr;
+                </button>
+            </div>
+
+            <!-- Modul 5 -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-200 hover:border-gempurple transition game-card-hover flex flex-col justify-between">
+                <div>
+                    <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl mb-3">🐶</div>
+                    <h3 class="text-lg font-black text-gemdark mb-1">Tebak Suara Satwa</h3>
+                    <p class="text-xs text-gray-600 font-medium">Mengenal suara dan karakteristik hewan darat/air.</p>
+                </div>
+                <button onclick="launchInteractiveModule(5)" class="mt-5 w-full bg-purple-50 hover:bg-gempurple hover:text-white text-gempurple font-extrabold py-2.5 rounded-2xl transition text-xs">
+                    Mainkan &rarr;
+                </button>
+            </div>
+
+            <!-- Modul 6 -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-pink-200 hover:border-gempink transition game-card-hover flex flex-col justify-between">
+                <div>
+                    <div class="w-14 h-14 bg-pink-100 rounded-2xl flex items-center justify-center text-3xl mb-3">🍎</div>
+                    <h3 class="text-lg font-black text-gemdark mb-1">Hitung Buah Segar</h3>
+                    <p class="text-xs text-gray-600 font-medium">Belajar kuantitas sederhana dengan buah buahan.</p>
+                </div>
+                <button onclick="launchInteractiveModule(6)" class="mt-5 w-full bg-pink-50 hover:bg-gempink hover:text-white text-gempink font-extrabold py-2.5 rounded-2xl transition text-xs">
+                    Mainkan &rarr;
+                </button>
+            </div>
+
+            <!-- Modul 7 -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-amber-200 hover:border-amber-400 transition game-card-hover flex flex-col justify-between">
+                <div>
+                    <div class="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center text-3xl mb-3">🧩</div>
+                    <h3 class="text-lg font-black text-gemdark mb-1">Pencocokan Memori Kartu</h3>
+                    <p class="text-xs text-gray-600 font-medium">Latih daya ingat anak dengan kartu bergambar.</p>
+                </div>
+                <button onclick="launchInteractiveModule(7)" class="mt-5 w-full bg-amber-50 hover:bg-amber-500 hover:text-white text-amber-800 font-extrabold py-2.5 rounded-2xl transition text-xs">
+                    Mainkan &rarr;
+                </button>
+            </div>
+
+            <!-- Modul 8 -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-emerald-200 hover:border-gemgreen transition game-card-hover flex flex-col justify-between">
+                <div>
+                    <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl mb-3">🌟</div>
+                    <h3 class="text-lg font-black text-gemdark mb-1">Mengenal Emosi & Perasaan</h3>
+                    <p class="text-xs text-gray-600 font-medium">Belajar ekspresi bahagia, sedih, tenang, dan ramah.</p>
+                </div>
+                <button onclick="launchInteractiveModule(8)" class="mt-5 w-full bg-emerald-50 hover:bg-gemgreen hover:text-white text-gemgreen font-extrabold py-2.5 rounded-2xl transition text-xs">
+                    Mainkan &rarr;
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: LEADERBOARD -->
+    <section id="leaderboard-section" class="main-section hidden max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div class="text-center space-y-3 mb-8">
+            <span class="bg-amber-100 text-amber-800 text-xs font-extrabold px-4 py-2 rounded-full uppercase tracking-wider border border-amber-200">
+                🏆 Papan Peringkat Sinkron Lintas Perangkat
+            </span>
+            <h2 class="text-3xl sm:text-5xl font-black text-gemdark">Juara Petualang Minggu Ini</h2>
+            <p class="text-gray-600 max-w-xl mx-auto font-medium text-sm">Menumbuhkan semangat kompetitif sehat antar siswa secara live.</p>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-amber-200">
+            <div class="bg-gradient-to-r from-amber-400 to-gemyellow p-5 text-gemdark flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl">🥇</span>
+                    <h3 class="text-lg sm:text-xl font-black">Top Peringkat Siswa (Auto-Sync)</h3>
+                </div>
+                <span class="bg-white/80 px-3 py-1 rounded-full text-[10px] font-extrabold">Shared Storage Active</span>
+            </div>
+
+            <div class="divide-y divide-gray-100" id="leaderboard-list"></div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: PARENT DASHBOARD & DIAGNOSTICS (ACCURATE TO RIIL PROGRESS) -->
+    <section id="dashboard-section" class="main-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div class="text-center space-y-3 mb-10">
+            <span class="bg-gemgreen/25 text-emerald-900 text-xs font-extrabold px-4 py-2 rounded-full uppercase tracking-wider">
+                📊 Laporan Evaluasi & Catatan Diagnostik Anak
+            </span>
+            <h2 class="text-3xl sm:text-5xl font-black text-gemdark">Pemantauan Progres & Kondisi Siswa</h2>
+            <p class="text-gray-600 max-w-xl mx-auto font-medium text-sm">Sesuai dengan riwayat aktivitas riil yang telah dikerjakan anak.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-l-8 border-gempurple flex items-center space-x-4">
+                <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-gempurple text-xl font-bold">🏆</div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500">Total Koin Anak</p>
+                    <h3 id="dash-total-coins" class="text-2xl font-black text-gemdark">0</h3>
+                </div>
+            </div>
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-l-8 border-gemgreen flex items-center space-x-4">
+                <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-gemgreen text-xl font-bold">💾</div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500">Aktivitas Selesai</p>
+                    <h3 id="dash-activity-count" class="text-xl font-black text-gemgreen">0 Sesi Game</h3>
+                </div>
+            </div>
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-l-8 border-gempink flex items-center space-x-4">
+                <div class="w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center text-gempink text-xl font-bold">📧</div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500">Email Wali</p>
+                    <h3 id="dash-parent-email" class="text-xs font-black text-gemdark truncate max-w-[150px]">-</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-gray-100 space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 gap-3">
+                <h3 class="text-lg sm:text-xl font-black text-gemdark flex items-center space-x-2">
+                    <i class="fa-solid fa-stethoscope text-gemgreen"></i>
+                    <span>Catatan Diagnostik Riil: <span id="diag-username" class="text-gempurple">-</span></span>
+                </h3>
+                <span id="diag-status-badge" class="bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-1 rounded-full">Status: Baru Memulai</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-emerald-50/60 border-2 border-emerald-200 rounded-2xl p-5 space-y-2">
+                    <h4 class="font-black text-emerald-900 text-sm flex items-center space-x-2"><span>✨ Bidang Unggul / Pandai</span></h4>
+                    <p id="diag-strength" class="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">
+                        Belum ada data aktivitas. Mainkan game materi atau tebak kata untuk melihat analisis kemampuan anak.
+                    </p>
+                </div>
+
+                <div class="bg-amber-50/60 border-2 border-amber-200 rounded-2xl p-5 space-y-2">
+                    <h4 class="font-black text-amber-900 text-sm flex items-center space-x-2"><span>⚠️ Perlu Perhatian / Kurang</span></h4>
+                    <p id="diag-weakness" class="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">
+                        Silakan selesaikan beberapa modul permainan agar sistem dapat mendiagnosis area yang perlu dilatih.
+                    </p>
+                </div>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <h4 class="font-black text-gemdark text-sm">Grafik Capaian Bidang Belajar (Riil)</h4>
+                <div class="space-y-3">
+                    <div>
+                        <div class="flex justify-between text-xs font-extrabold mb-1">
+                            <span>Matematika & Logika Angka</span>
+                            <span id="stat-math-label" class="text-gempurple">0 Sesi</span>
+                        </div>
+                        <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                            <div id="bar-math" class="bg-gempurple h-full rounded-full transition-all duration-500" style="width: 5%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-extrabold mb-1">
+                            <span>Warna & Bentuk Geometri Usia Dini</span>
+                            <span id="stat-geo-label" class="text-gemblue">0 Sesi</span>
+                        </div>
+                        <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                            <div id="bar-geo" class="bg-gemblue h-full rounded-full transition-all duration-500" style="width: 5%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-extrabold mb-1">
+                            <span>Bahasa & Pengejaan Kata</span>
+                            <span id="stat-word-label" class="text-gempink">0 Sesi</span>
+                        </div>
+                        <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                            <div id="bar-word" class="bg-gempink h-full rounded-full transition-all duration-500" style="width: 5%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE MODULE MODAL -->
+    <div id="interactive-module-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-5 border-4 border-gemblue">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div class="flex items-center space-x-3">
+                    <span id="mod-game-icon" class="text-2xl sm:text-3xl">🎨</span>
+                    <div>
+                        <h3 id="mod-game-title" class="text-lg sm:text-xl font-black text-gemdark">Judul Modul</h3>
+                        <p class="text-[10px] text-gray-500 font-bold">Mainkan & Dapatkan +15 Koin Bintang!</p>
+                    </div>
+                </div>
+                <button onclick="closeInteractiveModule()" class="w-9 h-9 bg-gray-100 hover:bg-rose-100 hover:text-rose-600 rounded-full flex items-center justify-center font-black text-lg transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="mod-game-body" class="text-center space-y-5 py-2"></div>
+
+            <div id="mod-game-footer" class="flex justify-between items-center pt-2 border-t">
+                <span id="mod-game-score" class="font-black text-amber-600 text-sm sm:text-base">Skor: 0</span>
+                <button onclick="closeInteractiveModule()" class="bg-gemdark text-white px-5 py-2 rounded-xl font-black text-xs sm:text-sm">
+                    Selesai & Simpan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT WITH MULTI-DEVICE & CROSS-TAB SYNC -->
+    <script>
+        // Clean default user if none exists
+        let defaultUser = {
+            email: "orangtua.budi@gmail.com",
+            name: "Budi Pratama",
+            avatar: "🦊",
+            coins: 0,
+            mathCount: 0,
+            wordCount: 0,
+            geoCount: 0,
+            totalSessions: 0
+        };
+
+        let studentsList = JSON.parse(localStorage.getItem('gembira_students_v3')) || [
+            defaultUser,
+            { email: "siska.parent@gmail.com", name: "Siska Melati", avatar: "🐱", coins: 0, mathCount: 0, wordCount: 0, geoCount: 0, totalSessions: 0 },
+            { email: "rian.parent@gmail.com", name: "Rian Ramadhan", avatar: "🦁", coins: 0, mathCount: 0, wordCount: 0, geoCount: 0, totalSessions: 0 }
+        ];
+
+        let currentUser = JSON.parse(localStorage.getItem('gembira_current_user_v3')) || defaultUser;
+
+        // Cross-tab and multi-device simulation listener via storage event
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'gembira_students_v3') {
+                studentsList = JSON.parse(e.newValue) || studentsList;
+                syncUserFromList();
+                updateUI();
+                renderLeaderboard();
+            }
+        });
+
+        function saveState() {
+            localStorage.setItem('gembira_students_v3', JSON.stringify(studentsList));
+            localStorage.setItem('gembira_current_user_v3', JSON.stringify(currentUser));
+        }
+
+        function syncUserFromList() {
+            let found = studentsList.find(s => s.email.toLowerCase() === currentUser.email.toLowerCase());
+            if (found) {
+                currentUser = { ...found };
+            }
+        }
+
+        window.onload = function() {
+            let found = studentsList.find(s => s.email.toLowerCase() === currentUser.email.toLowerCase());
+            if (!found) {
+                studentsList.push(currentUser);
+            } else {
+                currentUser = { ...found };
+            }
+            saveState();
+            updateUI();
+            renderLeaderboard();
+        };
+
+        function openLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+            document.getElementById('input-parent-email').value = currentUser.email;
+            document.getElementById('input-username').value = currentUser.name;
+        }
+
+        let selectedAvatarSymbol = currentUser.avatar;
+        function selectAvatar(symbol) {
+            selectedAvatarSymbol = symbol;
+            document.querySelectorAll('.avatar-option').forEach(btn => {
+                btn.classList.remove('border-gempurple', 'bg-purple-50');
+                btn.classList.add('border-gray-200');
+                if(btn.innerText.includes(symbol)) {
+                    btn.classList.add('border-gempurple', 'bg-purple-50');
+                    btn.classList.remove('border-gray-200');
+                }
+            });
+        }
+
+        function handleLogin() {
+            const emailInput = document.getElementById('input-parent-email').value.trim().toLowerCase();
+            const nameInput = document.getElementById('input-username').value.trim();
+
+            if(!emailInput || !nameInput) return;
+
+            let existing = studentsList.find(s => s.email.toLowerCase() === emailInput);
+            if (existing) {
+                currentUser = { ...existing };
+                currentUser.name = nameInput;
+                currentUser.avatar = selectedAvatarSymbol;
+            } else {
+                currentUser = {
+                    email: emailInput,
+                    name: nameInput,
+                    avatar: selectedAvatarSymbol,
+                    coins: 0,
+                    mathCount: 0,
+                    wordCount: 0,
+                    geoCount: 0,
+                    totalSessions: 0
+                };
+                studentsList.push(currentUser);
+            }
+
+            saveState();
+            updateUI();
+            renderLeaderboard();
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        function updateLeaderboardRecord() {
+            let idx = studentsList.findIndex(s => s.email.toLowerCase() === currentUser.email.toLowerCase());
+            if (idx !== -1) {
+                studentsList[idx] = { ...currentUser };
+            } else {
+                studentsList.push({ ...currentUser });
+            }
+            studentsList.sort((a, b) => b.coins - a.coins);
+            saveState();
+            renderLeaderboard();
+        }
+
+        function updateUI() {
+            document.getElementById('nav-username').innerText = currentUser.name;
+            document.getElementById('nav-user-avatar').innerText = currentUser.avatar;
+            document.getElementById('welcome-greeting').innerText = `Halo, ${currentUser.name}!`;
+            document.getElementById('global-coins').innerText = currentUser.coins;
+            document.getElementById('dash-total-coins').innerText = currentUser.coins;
+            document.getElementById('dash-parent-email').innerText = currentUser.email;
+            document.getElementById('diag-username').innerText = currentUser.name;
+            document.getElementById('dash-activity-count').innerText = `${currentUser.totalSessions || 0} Sesi Game`;
+
+            // Diagnostic & strength logic based on riil progress
+            let math = currentUser.mathCount || 0;
+            let word = currentUser.wordCount || 0;
+            let geo = currentUser.geoCount || 0;
+            let total = currentUser.totalSessions || 0;
+
+            document.getElementById('stat-math-label').innerText = `${math} Sesi`;
+            document.getElementById('stat-geo-label').innerText = `${geo} Sesi`;
+            document.getElementById('stat-word-label').innerText = `${word} Sesi`;
+
+            let mathPct = Math.min(100, (math * 25));
+            let geoPct = Math.min(100, (geo * 25));
+            let wordPct = Math.min(100, (word * 25));
+
+            document.getElementById('bar-math').style.width = (mathPct || 5) + '%';
+            document.getElementById('bar-geo').style.width = (geoPct || 5) + '%';
+            document.getElementById('bar-word').style.width = (wordPct || 5) + '%';
+
+            let strengthText = "Anak baru memulai sesi belajar. Coba mainkan berbagai modul agar sistem mencatat keunggulannya.";
+            let weaknessText = "Belum ada data evaluasi yang cukup. Selesaikan beberapa kuis untuk melihat rekomendasi bimbingan.";
+
+            if (total > 0) {
+                if (math >= geo && math >= word) {
+                    strengthText = "Anak menunjukkan ketertarikan & penguasaan yang sangat baik pada bidang Logika Angka & Berhitung.";
+                } else if (geo >= math && geo >= word) {
+                    strengthText = "Anak sangat menonjol pada pengenalan Bentuk Geometri, Warna, dan Koordinasi Visual.";
+                } else {
+                    strengthText = "Anak menunjukkan keunggulan yang baik pada Pengejaan Kata dan Kosakata interaktif.";
+                }
+
+                if (word <= math && word <= geo && total >= 2) {
+                    weaknessText = "Perlu perhatian lebih pada modul Pengejaan Kata dan Bahasa. Disarankan latihan 10 menit tambahan.";
+                } else if (math <= geo && total >= 2) {
+                    weaknessText = "Perlu latihan tambahan pada perhitungan cepat dan logika matematika.";
+                } else {
+                    weaknessText = "Perkembangan seimbang dan sangat baik. Pertahankan motivasi belajar harian!";
+                }
+            }
+
+            document.getElementById('diag-strength').innerText = strengthText;
+            document.getElementById('diag-weakness').innerText = weaknessText;
+        }
+
+        function renderLeaderboard() {
+            const container = document.getElementById('leaderboard-list');
+            container.innerHTML = '';
+
+            studentsList.sort((a, b) => b.coins - a.coins);
+
+            studentsList.slice(0, 10).forEach((st, idx) => {
+                let isMe = st.email.toLowerCase() === currentUser.email.toLowerCase();
+                let rankBadge = '';
+                if(idx === 0) rankBadge = 'bg-amber-400 text-white';
+                else if(idx === 1) rankBadge = 'bg-gray-300 text-gray-800';
+                else if(idx === 2) rankBadge = 'bg-amber-700/20 text-amber-800';
+                else rankBadge = 'bg-gray-100 text-gray-600';
+
+                const row = document.createElement('div');
+                row.className = `p-4 sm:p-5 flex items-center justify-between transition ${isMe ? 'bg-amber-50/80 border-l-4 border-amber-500' : 'hover:bg-gray-50'}`;
+                row.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-8 h-8 rounded-2xl ${rankBadge} font-black flex items-center justify-center text-sm shadow">${idx + 1}</span>
+                        <span class="text-2xl">${st.avatar}</span>
+                        <div>
+                            <h4 class="font-black text-gemdark text-sm sm:text-base">${st.name} ${isMe ? '(Akun Kamu)' : ''}</h4>
+                            <p class="text-[10px] text-emerald-600 font-bold truncate max-w-[150px]">Wali: ${st.email}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-base sm:text-lg font-black text-amber-600">${st.coins} ⭐</span>
+                        <p class="text-[9px] text-gray-400 font-bold">${st.totalSessions || 0} Sesi</p>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // Web Audio Synthesizer
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, duration) {
+            try {
+                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+        function playSuccessSound() {
+            playTone(523.25, 'triangle', 0.15);
+            setTimeout(() => playTone(659.25, 'triangle', 0.15), 100);
+            setTimeout(() => playTone(783.99, 'triangle', 0.3), 200);
+        }
+        function playWrongSound() {
+            playTone(200, 'sawtooth', 0.2);
+            setTimeout(() => playTone(150, 'sawtooth', 0.3), 150);
+        }
+
+        function switchSection(sectionId) {
+            const sections = document.querySelectorAll('.main-section');
+            sections.forEach(sec => sec.classList.add('hidden'));
+            
+            const target = document.getElementById(sectionId + '-section');
+            if (target) {
+                target.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if(sectionId === 'leaderboard') renderLeaderboard();
+            }
+        }
+
+        function switchGameTab(type) {
+            const balloonGame = document.getElementById('game-balloon');
+            const wordGame = document.getElementById('game-word');
+            const btnBalloon = document.getElementById('btn-balloon');
+            const btnWord = document.getElementById('btn-word');
+
+            if (type === 'balloon') {
+                balloonGame.classList.remove('hidden');
+                wordGame.classList.add('hidden');
+                btnBalloon.className = "px-4 py-2.5 rounded-2xl font-black shadow transition bg-gempurple text-white text-xs sm:text-sm shrink-0";
+                btnWord.className = "px-4 py-2.5 rounded-2xl font-black shadow transition bg-white text-gray-600 border-2 border-gray-200 text-xs sm:text-sm shrink-0";
+            } else {
+                balloonGame.classList.add('hidden');
+                wordGame.classList.remove('hidden');
+                btnWord.className = "px-4 py-2.5 rounded-2xl font-black shadow transition bg-gempink text-white text-xs sm:text-sm shrink-0";
+                btnBalloon.className = "px-4 py-2.5 rounded-2xl font-black shadow transition bg-white text-gray-600 border-2 border-gray-200 text-xs sm:text-sm shrink-0";
+            }
+        }
+
+        // Balloon Math Logic
+        let balloonScore = 0;
+        let balloonTimerInterval = null;
+        let timeLeft = 45;
+        let currentMathAns = 0;
+
+        function startBalloonGame() {
+            balloonScore = 0;
+            timeLeft = 45;
+            document.getElementById('balloon-start-screen').classList.add('hidden');
+            document.getElementById('balloon-play-area').classList.remove('hidden');
+            generateMathBalloon();
+
+            if (balloonTimerInterval) clearInterval(balloonTimerInterval);
+            balloonTimerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('balloon-timer').innerText = `⏱️ ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(balloonTimerInterval);
+                    playSuccessSound();
+                    currentUser.coins += 50;
+                    currentUser.mathCount = (currentUser.mathCount || 0) + 1;
+                    currentUser.totalSessions = (currentUser.totalSessions || 0) + 1;
+                    updateLeaderboardRecord();
+                    updateUI();
+
+                    document.getElementById('balloon-play-area').innerHTML = `
+                        <div class="py-8 space-y-4 text-center">
+                            <div class="text-6xl">🏆</div>
+                            <h3 class="text-2xl font-black text-gemdark">Waktu Selesai!</h3>
+                            <p class="text-lg font-bold">Skor Kamu: <span class="text-gempurple">${balloonScore}</span></p>
+                            <p class="text-emerald-600 font-extrabold text-xs">+50 Koin Ditambahkan ke Akun!</p>
+                            <button onclick="startBalloonGame()" class="bg-gempurple text-white font-black px-6 py-3 rounded-2xl shadow-xl text-sm">Main Lagi</button>
+                        </div>
+                    `;
+                }
+            }, 1000);
+        }
+
+        function generateMathBalloon() {
+            const n1 = Math.floor(Math.random() * 12) + 1;
+            const n2 = Math.floor(Math.random() * 12) + 1;
+            currentMathAns = n1 + n2;
+            document.getElementById('balloon-question').innerText = `${n1} + ${n2} = ?`;
+
+            let options = [currentMathAns];
+            while(options.length < 4) {
+                let wrong = currentMathAns + Math.floor(Math.random() * 6) - 3;
+                if(wrong !== currentMathAns && wrong >= 0 && !options.includes(wrong)) {
+                    options.push(wrong);
+                }
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            const container = document.getElementById('balloon-options');
+            container.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-gradient-to-tr from-purple-100 to-pink-100 hover:from-gempurple hover:to-pink-500 hover:text-white text-gemdark font-black text-xl py-5 rounded-2xl shadow transition border-4 border-white game-card-hover";
+                btn.innerHTML = `🎈<br>${opt}`;
+                btn.onclick = () => checkBalloonAnswer(opt);
+                container.appendChild(btn);
+            });
+            document.getElementById('balloon-feedback').innerHTML = '';
+        }
+
+        function checkBalloonAnswer(selected) {
+            const fb = document.getElementById('balloon-feedback');
+            if (selected === currentMathAns) {
+                balloonScore += 15;
+                playSuccessSound();
+                fb.innerHTML = "<span class='text-emerald-600'>🎉 Benar Hebat!</span>";
+                currentUser.coins += 5;
+                currentUser.mathCount = (currentUser.mathCount || 0) + 1;
+                updateLeaderboardRecord();
+                updateUI();
+                document.getElementById('balloon-score').innerText = `⭐ Skor: ${balloonScore}`;
+                setTimeout(generateMathBalloon, 600);
+            } else {
+                playWrongSound();
+                fb.innerHTML = "<span class='text-rose-500'>❌ Coba Lagi!</span>";
+            }
+        }
+
+        // Word Game Logic
+        const wordList = [
+            { emoji: "🍎", word: "APEL", hint: "_ P P L E", missing: "A" },
+            { emoji: "🐱", word: "KUCING", hint: "K U C I _ G", missing: "N" },
+            { emoji: "☀️", word: "MATAHARI", hint: "M A T A _ A R I", missing: "H" },
+            { emoji: "🚗", word: "MOBIL", hint: "M O B I _", missing: "L" }
+        ];
+        let currentWordIdx = 0;
+        let wordScore = 0;
+
+        function startWordGame() {
+            currentWordIdx = 0;
+            wordScore = 0;
+            document.getElementById('word-start-screen').classList.add('hidden');
+            document.getElementById('word-play-area').classList.remove('hidden');
+            loadWordQuestion();
+        }
+
+        function loadWordQuestion() {
+            if (currentWordIdx >= wordList.length) {
+                playSuccessSound();
+                currentUser.coins += 30;
+                currentUser.wordCount = (currentUser.wordCount || 0) + 1;
+                currentUser.totalSessions = (currentUser.totalSessions || 0) + 1;
+                updateLeaderboardRecord();
+                updateUI();
+
+                document.getElementById('word-play-area').innerHTML = `
+                    <div class="py-8 space-y-4 text-center">
+                        <div class="text-6xl">🏆</div>
+                        <h3 class="text-2xl font-black text-gemdark">Selesai! Kata Dikuasai</h3>
+                        <p class="text-lg font-bold">Skor: <span class="text-gempink">${wordScore}</span></p>
+                        <p class="text-emerald-600 font-extrabold text-xs">+30 Koin Ditambahkan!</p>
+                        <button onclick="startWordGame()" class="bg-gempink text-white font-black px-6 py-3 rounded-2xl shadow-xl text-sm">Main Lagi</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const current = wordList[currentWordIdx];
+            document.getElementById('word-emoji').innerText = current.emoji;
+            document.getElementById('word-display').innerText = current.hint;
+            document.getElementById('word-level-indicator').innerText = `Soal ${currentWordIdx + 1} / ${wordList.length}`;
+
+            let opts = [current.missing, "A", "E", "T", "M"].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4);
+            opts.sort(() => Math.random() - 0.5);
+
+            const container = document.getElementById('word-options');
+            container.innerHTML = '';
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-gradient-to-tr from-pink-100 to-yellow-100 hover:bg-gempink hover:text-white text-gemdark font-black text-xl py-5 rounded-2xl shadow transition border-4 border-white game-card-hover";
+                btn.innerText = opt;
+                btn.onclick = () => checkWordAnswer(opt, current.missing);
+                container.appendChild(btn);
+            });
+            document.getElementById('word-feedback').innerHTML = '';
+        }
+
+        function checkWordAnswer(selected, correct) {
+            const fb = document.getElementById('word-feedback');
+            if (selected === correct) {
+                wordScore += 25;
+                playSuccessSound();
+                document.getElementById('word-score').innerText = `⭐ Skor: ${wordScore}`;
+                fb.innerHTML = "<span class='text-emerald-600'>🌟 Benar Sekali!</span>";
+                currentUser.coins += 10;
+                currentUser.wordCount = (currentUser.wordCount || 0) + 1;
+                updateLeaderboardRecord();
+                updateUI();
+                currentWordIdx++;
+                setTimeout(loadWordQuestion, 800);
+            } else {
+                playWrongSound();
+                fb.innerHTML = "<span class='text-rose-500'>❌ Coba Huruf Lain!</span>";
+            }
+        }
+
+        // Interactive Playable Modules Logic
+        let activeModuleId = null;
+
+        function launchInteractiveModule(id) {
+            activeModuleId = id;
+            document.getElementById('interactive-module-modal').classList.remove('hidden');
+            loadModuleStage();
+        }
+
+        function closeInteractiveModule() {
+            document.getElementById('interactive-module-modal').classList.add('hidden');
+            updateUI();
+        }
+
+        function loadModuleStage() {
+            const titleEl = document.getElementById('mod-game-title');
+            const iconEl = document.getElementById('mod-game-icon');
+            const bodyEl = document.getElementById('mod-game-body');
+            document.getElementById('mod-game-score').innerText = `Koin Kamu: ${currentUser.coins}`;
+
+            if (activeModuleId === 1 || activeModuleId === 2 || activeModuleId === 7) {
+                currentUser.geoCount = (currentUser.geoCount || 0) + 1;
+            } else if (activeModuleId === 3 || activeModuleId === 6) {
+                currentUser.mathCount = (currentUser.mathCount || 0) + 1;
+            } else {
+                currentUser.wordCount = (currentUser.wordCount || 0) + 1;
+            }
+            currentUser.totalSessions = (currentUser.totalSessions || 0) + 1;
+            updateLeaderboardRecord();
+
+            if (activeModuleId === 1) {
+                iconEl.innerText = "🔴";
+                titleEl.innerText = "Mengenal Warna Ceria";
+                bodyEl.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="w-20 h-20 mx-auto bg-rose-500 rounded-full flex items-center justify-center text-4xl shadow-lg floating">🍎</div>
+                        <p class="font-bold text-gray-600 text-xs">Warna apakah buah apel di atas?</p>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button onclick="checkModuleAns('MERAH', 'MERAH')" class="bg-gray-100 hover:bg-gemblue hover:text-white font-black py-3 rounded-2xl shadow transition text-sm text-gemdark border-2 border-gray-200">Merah</button>
+                            <button onclick="checkModuleAns('BIRU', 'MERAH')" class="bg-gray-100 hover:bg-gemblue hover:text-white font-black py-3 rounded-2xl shadow transition text-sm text-gemdark border-2 border-gray-200">Biru</button>
+                        </div>
+                        <div id="mod-feedback" class="text-xs font-black h-6"></div>
+                    </div>
+                `;
+            } else if (activeModuleId === 2) {
+                iconEl.innerText = "⭐";
+                titleEl.innerText = "Bentuk Geometri Ajaib";
+                bodyEl.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="text-6xl floating py-1">⭕</div>
+                        <p class="font-bold text-gray-600 text-xs">Pilih nama bentuk geometri yang benar!</p>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button onclick="checkModuleAns('LINGKARAN', 'LINGKARAN')" class="bg-gray-100 hover:bg-gempink hover:text-white font-black py-3 rounded-2xl shadow transition text-xs text-gemdark border-2 border-gray-200">Lingkaran</button>
+                            <button onclick="checkModuleAns('KOTAK', 'LINGKARAN')" class="bg-gray-100 hover:bg-gempink hover:text-white font-black py-3 rounded-2xl shadow transition text-xs text-gemdark border-2 border-gray-200">Kotak</button>
+                        </div>
+                        <div id="mod-feedback" class="text-xs font-black h-6"></div>
+                    </div>
+                `;
+            } else if (activeModuleId === 3) {
+                iconEl.innerText = "🎵";
+                titleEl.innerText = "Hitung Hewan Melompat";
+                bodyEl.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="bg-emerald-50 p-4 rounded-2xl border-2 border-emerald-200 text-3xl tracking-widest">🦆 🦆 🦆</div>
+                        <p class="font-bold text-gray-600 text-xs">Berapa jumlah hewan bebek di atas?</p>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button onclick="checkModuleAns(3, 3)" class="bg-gray-100 hover:bg-gemgreen hover:text-white font-black py-3 rounded-2xl shadow transition text-xl text-gemdark border-2 border-gray-200">3</button>
+                            <button onclick="checkModuleAns(5, 3)" class="bg-gray-100 hover:bg-gemgreen hover:text-white font-black py-3 rounded-2xl shadow transition text-xl text-gemdark border-2 border-gray-200">5</button>
+                        </div>
+                        <div id="mod-feedback" class="text-xs font-black h-6"></div>
+                    </div>
+                `;
+            } else if (activeModuleId === 4) {
+                iconEl.innerText = "📖";
+                titleEl.innerText = "Dongeng Nilai Moral";
+                bodyEl.innerHTML = `
+                    <div class="space-y-3 text-left bg-amber-50/70 p-4 rounded-2xl border-2 border-amber-200">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-3xl">🦊</span>
+                            <h4 class="font-black text-amber-900 text-sm">Kisah Kancil Menolong Teman</h4>
+                        </div>
+                        <p class="text-xs text-gray-700 font-medium leading-relaxed">
+                            Kancil melihat kelinci kecil kesulitan menyeberang sungai. Apa yang harus dilakukan Kancil?
+                        </p>
+                        <div class="space-y-2 pt-1">
+                            <button onclick="checkModuleAns('A', 'A')" class="w-full text-left bg-white hover:bg-amber-100 font-bold p-2.5 rounded-xl border border-amber-300 text-[11px] shadow-sm transition">
+                                A. Segera menolong kelinci dengan ramah. (Benar ✨)
+                            </button>
+                        </div>
+                        <div id="mod-feedback" class="text-xs font-black h-6 text-center"></div>
+                    </div>
+                `;
+            } else {
+                iconEl.innerText = "🌟";
+                titleEl.innerText = "Modul Interaktif Pilihan";
+                bodyEl.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="text-5xl floating py-2">😊</div>
+                        <p class="font-bold text-gray-600 text-xs">Apakah anak merasa senang belajar hari ini?</p>
+                        <div class="grid grid-cols-1 gap-2.5">
+                            <button onclick="checkModuleAns('Senang', 'Senang')" class="bg-gray-100 hover:bg-gemgreen hover:text-white font-black py-3 rounded-2xl shadow transition text-xs border-2 border-gray-200">Sangat Senang! 😊</button>
+                        </div>
+                        <div id="mod-feedback" class="text-xs font-black h-6"></div>
+                    </div>
+                `;
+            }
+        }
+
+        function checkModuleAns(selected, correct) {
+            const fb = document.getElementById('mod-feedback');
+            if (String(selected) === String(correct)) {
+                playSuccessSound();
+                currentUser.coins += 15;
+                updateLeaderboardRecord();
+                updateUI();
+                document.getElementById('mod-game-score').innerText = `Koin Kamu: ${currentUser.coins}`;
+                fb.innerHTML = "<span class='text-emerald-600 font-black'>🎉 Benar! +15 Koin Ditambahkan!</span>";
+            } else {
+                playWrongSound();
+                fb.innerHTML = "<span class='text-rose-500 font-black'>❌ Coba pilih jawaban lain!</span>";
+            }
+        }
+    </script>
+</body>
+</html>
